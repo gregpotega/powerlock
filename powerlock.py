@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os
 import sys
 import json
@@ -22,7 +24,7 @@ def print_help():
     help_text = """
 Encryption, decryption of files and directories
 
-Use: encpower (encrypt|decrypt) <input_path> <output_path>
+Use: powerlock (encrypt|decrypt) <input_path> <output_path>
 
 Options::
   encrypt    Encrypts a file or directory
@@ -30,8 +32,8 @@ Options::
   -h, --help Displays this help
 
 Examples:
-  encpower encrypt file.txt file.txt.enc
-  encpower decrypt file.txt.enc file.txt
+  powerlock encrypt file.txt file.txt.enc
+  powerlock decrypt file.txt.enc file.txt
 """
     print(help_text)
 
