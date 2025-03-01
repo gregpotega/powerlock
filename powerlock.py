@@ -12,14 +12,31 @@ from cryptography.hazmat.backends import default_backend
 import base64
 
 # Konfiguracja szyfrowania
-SALT_SIZE = 16
+SALT_SIZE =16
 KEY_SIZE = 32
 IV_SIZE = 16
 ITERATIONS = 100_000
-HMAC_KEY_SIZE = 32
+HMAC_KEY_SIZE = 32 
+
+def print_help():
+    help_text = """
+Encryption, decryption of files and directories
+
+Use: encpower (encrypt|decrypt) <input_path> <output_path>
+
+Options::
+  encrypt    Encrypts a file or directory
+  decrypt    Decrypts a file or directory
+  -h, --help Displays this help
+
+Examples:
+  encpower encrypt file.txt file.txt.enc
+  encpower decrypt file.txt.enc file.txt
+"""
+    print(help_text)
 
 def derive_key(password: str, salt: bytes) -> bytes:
-    """Generuje klucz na podstawie hasła i soli."""
+    # Generates a key based on a password and salt
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
         length=KEY_SIZE + HMAC_KEY_SIZE,
@@ -31,7 +48,7 @@ def derive_key(password: str, salt: bytes) -> bytes:
     return key_material[:KEY_SIZE], key_material[KEY_SIZE:]
 
 def set_readonly(file_path: str):
-    """Ustawia plik jako tylko do odczytu."""
+    # Sets the file to read-only.
     if os.name == 'nt':
         FILE_ATTRIBUTE_READONLY = 0x01
         ctypes.windll.kernel32.SetFileAttributesW(file_path, FILE_ATTRIBUTE_READONLY)
@@ -39,7 +56,7 @@ def set_readonly(file_path: str):
         os.chmod(file_path, 0o400)
 
 def remove_readonly(file_path: str):
-    """Usuwa atrybut tylko do odczytu z pliku."""
+    # Removes the readonly attribute from a file.
     if os.name == 'nt':
         FILE_ATTRIBUTE_NORMAL = 0x80
         ctypes.windll.kernel32.SetFileAttributesW(file_path, FILE_ATTRIBUTE_NORMAL)
@@ -47,9 +64,9 @@ def remove_readonly(file_path: str):
         os.chmod(file_path, 0o600)
 
 def encrypt_file(input_file: str, output_file: str, password: str):
-    """Szyfruje plik AES-256 w trybie CBC z HMAC dla integralności."""
+    # Encrypts a file with AES-256 CBC mode with HMAC for integrity
     if not os.path.exists(input_file):
-        print(f"Błąd: Plik {input_file} nie istnieje.")
+        print(f"Error: File {input_file} does not exist.")
         return
     
     salt = os.urandom(SALT_SIZE)
@@ -72,12 +89,12 @@ def encrypt_file(input_file: str, output_file: str, password: str):
         f.write(salt + iv + hmac_digest + ciphertext)
     
     set_readonly(output_file)
-    print(f"Plik zaszyfrowany: {output_file}")
+    print(f"Encrypted file: {output_file}")
 
 def decrypt_file(input_file: str, output_file: str, password: str):
-    """Deszyfruje plik AES-256 w trybie CBC z weryfikacją HMAC."""
+    # Decrypts AES-256 file in CBC mode with HMAC verification.
     if not os.path.exists(input_file):
-        print(f"Błąd: Plik {input_file} nie istnieje.")
+        print(f"Error: File {input_file} does not exist")
         return
     
     remove_readonly(input_file)
@@ -90,7 +107,7 @@ def decrypt_file(input_file: str, output_file: str, password: str):
     
     hmac_calculated = hmac.new(hmac_key, ciphertext, hashlib.sha256).digest()
     if not hmac.compare_digest(hmac_stored, hmac_calculated):
-        print("Błąd: Plik został zmodyfikowany lub hasło jest nieprawidłowe!")
+        print("Error: File has been modified or password is incorrect!")
         return
     
     cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
@@ -103,10 +120,10 @@ def decrypt_file(input_file: str, output_file: str, password: str):
     with open(output_file, 'wb') as f:
         f.write(plaintext)
     
-    print(f"Plik odszyfrowany: {output_file}")
+    print(f"Decrypted file: {output_file}")
 
 def encrypt_directory(input_dir: str, output_dir: str, password: str):
-    """Szyfruje wszystkie pliki w katalogu."""
+    # Szyfruje wszystkie pliki w katalogu.
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
@@ -120,7 +137,7 @@ def encrypt_directory(input_dir: str, output_dir: str, password: str):
             encrypt_file(os.path.join(root, file), os.path.join(target_root, file + '.enc'), password)
 
 def decrypt_directory(input_dir: str, output_dir: str, password: str):
-    """Deszyfruje wszystkie pliki w katalogu."""
+    # Decrypts all files in a directory.
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     
@@ -135,8 +152,12 @@ def decrypt_directory(input_dir: str, output_dir: str, password: str):
                 decrypt_file(os.path.join(root, file), os.path.join(target_root, file[:-4]), password)
 
 def main():
+    if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help"):
+        print_help()
+        sys.exit(0)
+
     if len(sys.argv) < 4:
-        print("Użycie: python script.py (encrypt|decrypt) <input_path> <output_path>")
+        print("Use: encpower (encrypt|decrypt) <input_path> <output_path>")
         sys.exit(1)
     
     mode = sys.argv[1]
@@ -144,10 +165,10 @@ def main():
     output_path = sys.argv[3]
     
     if not os.path.exists(input_path):
-        print(f"Błąd: {input_path} nie istnieje.")
+        print(f"Error: {input_path} does not exist.")
         sys.exit(1)
     
-    password = getpass.getpass("Podaj hasło: ")
+    password = getpass.getpass("Enter your password: ")
     
     if mode == "encrypt":
         if os.path.isdir(input_path):
@@ -160,7 +181,7 @@ def main():
         else:
             decrypt_file(input_path, output_path, password)
     else:
-        print("Nieznana opcja!")
+        print("Unknown option!")
         sys.exit(1)
 
 if __name__ == "__main__":
