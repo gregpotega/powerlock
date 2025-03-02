@@ -2,7 +2,6 @@
 
 import os
 import sys
-import json
 import getpass
 import hmac
 import hashlib
@@ -13,7 +12,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 import base64
 
-# Konfiguracja szyfrowania
+# Encryption Configuration
 SALT_SIZE =16
 KEY_SIZE = 32
 IV_SIZE = 16
@@ -22,26 +21,43 @@ HMAC_KEY_SIZE = 32
 
 def print_help():
     help_text = """
-Encryption, decryption of files and directories
 
-Use: powerlock (encrypt|decrypt) <input_path> <output_path>
+Use: powerlock (-e | -d) or (--encrypt | --decrypt) <input_path> <output_path>
 
 Options:
-  encrypt       Encrypts a file or directory
-  decrypt       Decrypts a file or directory
-  -h, --help    Displays this help
+  -e, --encrypt     Encrypts a file or directory
+  -d, --decrypt     Decrypts a file or directory
+  -h, --help        Displays this help
+  -i, --info        Information about the program
 
 Examples:
-    Files:
-    powerlock encrypt file.txt file.txt.enc
-    powerlock decrypt file.txt.enc file.txt
-    
-    Catalogs:
-    powerlock encrypt catalog catalog.enc
-    powerlock decrypt catalog.enc catalog
+
+    Encryption:
+
+        File:               powerlock encrypt file.txt file.txt.enc (recommended)
+        Directory:          powerlock encrypt catalog catalog.enc (recommended)
+        File on the fly:    powerlock encrypt file.txt file.txt
+
+    Decryption:
+
+        File:               powerlock decrypt file.txt.enc file.txt (recommended)
+        Directory:          powerlock decrypt catalog.enc catalog (recommended)
+        File on the fly:    powerlock decrypt file.txt file.txt   
 
 """
     print(help_text)
+
+def print_info():
+    info_text = """
+-------------------------------------------
+Program Name:   PowerLock
+Version:        1.0.0
+Author:         Greg Potega
+Licence:        Apache 2.0
+Description:    PowerLock - a tool for encrypting and decrypting files and directories.
+-------------------------------------------   
+"""
+    print(info_text)
 
 def derive_key(password: str, salt: bytes) -> bytes:
     # Generates a key based on a password and salt
@@ -163,9 +179,13 @@ def main():
     if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help"):
         print_help()
         sys.exit(0)
+    
+    if sys.argv[1] in ("-i", "--info"):
+        print_info()
+        sys.exit(0)
 
     if len(sys.argv) < 4:
-        print("Use: powerlock (encrypt|decrypt) <input_path> <output_path>")
+        print("Use: powerlock (-e | -d) or (--encrypt | --decrypt) <input_path> <output_path>")
         sys.exit(1)
     
     mode = sys.argv[1]
@@ -178,12 +198,12 @@ def main():
     
     password = getpass.getpass("Enter your password: ")
     
-    if mode == "encrypt":
+    if mode in ("--encrypt", "-e"):
         if os.path.isdir(input_path):
             encrypt_directory(input_path, output_path, password)
         else:
             encrypt_file(input_path, output_path, password)
-    elif mode == "decrypt":
+    elif mode in ("--decrypt", "-d"):
         if os.path.isdir(input_path):
             decrypt_directory(input_path, output_path, password)
         else:
