@@ -34,15 +34,15 @@ Examples:
 
     Encryption:
 
-        File:               powerlock encrypt file.txt file.txt.enc (recommended)
-        Directory:          powerlock encrypt catalog catalog.enc (recommended)
-        File on the fly:    powerlock encrypt file.txt file.txt
+        File:               powerlock -e file.txt file.txt.enc (recommended)
+        Directory:          powerlock -e catalog catalog.enc (recommended)
+        File on the fly:    powerlock -e file.txt file.txt
 
     Decryption:
 
-        File:               powerlock decrypt file.txt.enc file.txt (recommended)
-        Directory:          powerlock decrypt catalog.enc catalog (recommended)
-        File on the fly:    powerlock decrypt file.txt file.txt   
+        File:               powerlock -d file.txt.enc file.txt (recommended)
+        Directory:          powerlock -d catalog.enc catalog (recommended)
+        File on the fly:    powerlock -d file.txt file.txt   
 
 """
     print(help_text)
