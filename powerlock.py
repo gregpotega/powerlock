@@ -26,14 +26,20 @@ Encryption, decryption of files and directories
 
 Use: powerlock (encrypt|decrypt) <input_path> <output_path>
 
-Options::
-  encrypt    Encrypts a file or directory
-  decrypt    Decrypts a file or directory
-  -h, --help Displays this help
+Options:
+  encrypt       Encrypts a file or directory
+  decrypt       Decrypts a file or directory
+  -h, --help    Displays this help
 
 Examples:
-  powerlock encrypt file.txt file.txt.enc
-  powerlock decrypt file.txt.enc file.txt
+    Files:
+    powerlock encrypt file.txt file.txt.enc
+    powerlock decrypt file.txt.enc file.txt
+    
+    Catalogs:
+    powerlock encrypt catalog catalog.enc
+    powerlock decrypt catalog.enc catalog
+
 """
     print(help_text)
 
@@ -159,7 +165,7 @@ def main():
         sys.exit(0)
 
     if len(sys.argv) < 4:
-        print("Use: encpower (encrypt|decrypt) <input_path> <output_path>")
+        print("Use: powerlock (encrypt|decrypt) <input_path> <output_path>")
         sys.exit(1)
     
     mode = sys.argv[1]
