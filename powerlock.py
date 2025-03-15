@@ -7,6 +7,7 @@ import hmac
 import hashlib
 import ctypes
 import keyring
+import re
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -170,6 +171,33 @@ def set_password(service_name: str, username: str, password: str):
     """
     keyring.set_password(service_name, username, password)
 
+def validate_password_strength(password: str) -> bool:
+    """
+    Validates the strength of a password.
+    
+    Args:
+        password (str): The password to validate.
+    
+    Returns:
+        bool: True if the password is strong, False otherwise.
+    """
+    if len(password) < 8:
+        print("Password must be at least 8 characters long.")
+        return False
+    if not re.search(r"[A-Z]", password):
+        print("Password must contain at least one uppercase letter.")
+        return False
+    if not re.search(r"[a-z]", password):
+        print("Password must contain at least one lowercase letter.")
+        return False
+    if not re.search(r"\d", password):
+        print("Password must contain at least one digit.")
+        return False
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        print("Password must contain at least one special character.")
+        return False
+    return True
+
 def main():
     try:
         if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help"):
@@ -198,6 +226,8 @@ def main():
         
         if not password:
             password = getpass.getpass("Enter your password: ")
+            if not validate_password_strength(password):
+                sys.exit(1)
             set_password(service_name, username, password)
         
         if mode in ("--encrypt", "-e"):

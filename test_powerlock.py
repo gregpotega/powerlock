@@ -2,7 +2,7 @@ import unittest
 import keyring
 import os
 import shutil
-from powerlock import derive_key, set_readonly, remove_readonly, encrypt_file, decrypt_file, encrypt_directory, decrypt_directory, derive_key, get_password, set_password
+from powerlock import derive_key, set_readonly, remove_readonly, encrypt_file, decrypt_file, encrypt_directory, decrypt_directory, derive_key, get_password, set_password, validate_password_strength
 
 
 class TestPowerlock(unittest.TestCase):
@@ -93,6 +93,17 @@ class TestPowerlock(unittest.TestCase):
         # Retrieve the password using the function
         retrieved_password = get_password(service_name, username)
         self.assertEqual(retrieved_password, password)
+
+    def test_validate_password_strength(self):
+        # Test weak passwords
+        self.assertFalse(validate_password_strength("short"))
+        self.assertFalse(validate_password_strength("nouppercase1!"))
+        self.assertFalse(validate_password_strength("NOLOWERCASE1!"))
+        self.assertFalse(validate_password_strength("NoDigits!"))
+        self.assertFalse(validate_password_strength("NoSpecialChar1"))
+        
+        # Test strong password
+        self.assertTrue(validate_password_strength("StrongPass1!"))
 
 if __name__ == "__main__":
     unittest.main()
