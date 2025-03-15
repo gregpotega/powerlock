@@ -1,7 +1,8 @@
 import unittest
+import keyring
 import os
 import shutil
-from powerlock import derive_key, set_readonly, remove_readonly, encrypt_file, decrypt_file, encrypt_directory, decrypt_directory, derive_key
+from powerlock import derive_key, set_readonly, remove_readonly, encrypt_file, decrypt_file, encrypt_directory, decrypt_directory, derive_key, get_password, set_password
 
 
 class TestPowerlock(unittest.TestCase):
@@ -68,6 +69,30 @@ class TestPowerlock(unittest.TestCase):
         with open(os.path.join(decrypt_dir, "test_file.txt"), "r") as f:
             content = f.read()
         self.assertEqual(content, "This is a test file.")
+
+    def test_set_password(self):
+        service_name = "test_service"
+        username = "test_user"
+        password = "test_password"
+        
+        # Set the password
+        set_password(service_name, username, password)
+        
+        # Retrieve the password to verify it was set correctly
+        retrieved_password = keyring.get_password(service_name, username)
+        self.assertEqual(retrieved_password, password)
+
+    def test_get_password(self):
+        service_name = "test_service"
+        username = "test_user"
+        password = "test_password"
+        
+        # Set the password first
+        keyring.set_password(service_name, username, password)
+        
+        # Retrieve the password using the function
+        retrieved_password = get_password(service_name, username)
+        self.assertEqual(retrieved_password, password)
 
 if __name__ == "__main__":
     unittest.main()

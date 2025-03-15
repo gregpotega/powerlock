@@ -56,3 +56,5 @@ Ogólnie rzecz biorąc, kod jest solidny, dobrze zabezpieczony i dobrze napisany
 - **test_encrypt_directory**: Sprawdza, czy katalog jest zaszyfrowany.
 - **test_decrypt_directory**: Sprawdza, czy katalog jest odszyfrowany i jego zawartość jest zgodna z oryginałem.
 
+
+

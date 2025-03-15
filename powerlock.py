@@ -6,11 +6,12 @@ import getpass
 import hmac
 import hashlib
 import ctypes
+import keyring
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
-import base64
+from utils.help import print_help, print_info
 
 # Encryption Configuration
 SALT_SIZE =16
@@ -19,45 +20,7 @@ IV_SIZE = 16
 ITERATIONS = 100_000
 HMAC_KEY_SIZE = 32 
 
-def print_help():
-    help_text = """
 
-Use: powerlock (-e | -d) or (--encrypt | --decrypt) <input_path> <output_path>
-
-Options:
-  -e, --encrypt     Encrypts a file or directory
-  -d, --decrypt     Decrypts a file or directory
-  -h, --help        Displays this help
-  -i, --info        Information about the program
-
-Examples:
-
-    Encryption:
-
-        File:               powerlock -e file.txt file.txt.enc (recommended)
-        Directory:          powerlock -e catalog catalog.enc (recommended)
-        File on the fly:    powerlock -e file.txt file.txt
-
-    Decryption:
-
-        File:               powerlock -d file.txt.enc file.txt (recommended)
-        Directory:          powerlock -d catalog.enc catalog (recommended)
-        File on the fly:    powerlock -d file.txt file.txt   
-
-"""
-    print(help_text)
-
-def print_info():
-    info_text = """
--------------------------------------------
-Program Name:   PowerLock
-Version:        1.0.0
-Author:         Greg Potega
-Licence:        Apache 2.0
-Description:    PowerLock - a tool for encrypting and decrypting files and directories.
--------------------------------------------   
-"""
-    print(info_text)
 
 def derive_key(password: str, salt: bytes) -> bytes:
     # Generates a key based on a password and salt
@@ -183,6 +146,30 @@ def decrypt_directory(input_dir: str, output_dir: str, password: str):
     except Exception as e:
         print(f"Error during directory decryption: {e}")
 
+def get_password(service_name: str, username: str) -> str:
+    """
+    Retrieves the password from the system keyring.
+    
+    Args:
+        service_name (str): The name of the service.
+        username (str): The username for which to retrieve the password.
+    
+    Returns:
+        str: The retrieved password.
+    """
+    return keyring.get_password(service_name, username)
+
+def set_password(service_name: str, username: str, password: str):
+    """
+    Sets the password in the system keyring.
+    
+    Args:
+        service_name (str): The name of the service.
+        username (str): The username for which to set the password.
+        password (str): The password to set.
+    """
+    keyring.set_password(service_name, username, password)
+
 def main():
     try:
         if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help"):
@@ -205,7 +192,13 @@ def main():
             print(f"Error: {input_path} does not exist.")
             sys.exit(1)
         
-        password = getpass.getpass("Enter your password: ")
+        service_name = "powerlock"
+        username = getpass.getuser()
+        password = get_password(service_name, username)
+        
+        if not password:
+            password = getpass.getpass("Enter your password: ")
+            set_password(service_name, username, password)
         
         if mode in ("--encrypt", "-e"):
             if os.path.isdir(input_path):
