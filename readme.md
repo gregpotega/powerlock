@@ -44,3 +44,15 @@ Kod w pliku powerlock.py implementuje narzędzie do szyfrowania i deszyfrowania 
    - Można dodać testy jednostkowe, aby zapewnić poprawność działania funkcji.
 
 Ogólnie rzecz biorąc, kod jest solidny, dobrze zabezpieczony i dobrze napisany. Spełnia swoje zadanie w sposób efektywny i bezpieczny.
+
+### Opis testów jednostkowych
+
+- **setUp**: Tworzy tymczasowy katalog i plik testowy przed każdym testem.
+- **tearDown**: Usuwa tymczasowy katalog po każdym teście.
+- **test_set_readonly**: Sprawdza, czy plik jest ustawiony jako tylko do odczytu.
+- **test_remove_readonly**: Sprawdza, czy atrybut tylko do odczytu jest usunięty.
+- **test_encrypt_file**: Sprawdza, czy plik jest zaszyfrowany.
+- **test_decrypt_file**: Sprawdza, czy plik jest odszyfrowany i jego zawartość jest zgodna z oryginałem.
+- **test_encrypt_directory**: Sprawdza, czy katalog jest zaszyfrowany.
+- **test_decrypt_directory**: Sprawdza, czy katalog jest odszyfrowany i jego zawartość jest zgodna z oryginałem.
+
