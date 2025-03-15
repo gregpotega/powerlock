@@ -2,6 +2,7 @@ import unittest
 import keyring
 import os
 import shutil
+import tempfile
 from unittest.mock import patch
 from powerlock import derive_key, set_readonly, remove_readonly, encrypt_file, decrypt_file, encrypt_directory, decrypt_directory, derive_key, get_password, set_password, validate_password_strength, get_password_with_confirmation, get_password_without_confirmation
 
@@ -106,7 +107,21 @@ class TestPowerlock(unittest.TestCase):
         # Test strong password
         self.assertTrue(validate_password_strength("StrongPass1!"))
 
-    
+    def test_temp_file_cleanup_encrypt(self):
+        password = "testpassword"
+        with patch('tempfile.NamedTemporaryFile', wraps=tempfile.NamedTemporaryFile) as mock_tempfile:
+            encrypt_file(self.test_file, self.encrypted_file, password)
+            temp_file_path = mock_tempfile.return_value.name
+            self.assertFalse(os.path.exists(temp_file_path), "Temporary file was not deleted after encryption")
+
+    def test_temp_file_cleanup_decrypt(self):
+        password = "testpassword"
+        encrypt_file(self.test_file, self.encrypted_file, password)
+        with patch('tempfile.NamedTemporaryFile', wraps=tempfile.NamedTemporaryFile) as mock_tempfile:
+            decrypt_file(self.encrypted_file, self.decrypted_file, password)
+            temp_file_path = mock_tempfile.return_value.name
+            self.assertFalse(os.path.exists(temp_file_path), "Temporary file was not deleted after decryption")
+
 
 if __name__ == "__main__":
     unittest.main()

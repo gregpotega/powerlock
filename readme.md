@@ -56,3 +56,7 @@ Ogólnie rzecz biorąc, kod jest solidny, dobrze zabezpieczony i dobrze napisany
 - **test_encrypt_directory**: Sprawdza, czy katalog jest zaszyfrowany.
 - **test_decrypt_directory**: Sprawdza, czy katalog jest odszyfrowany i jego zawartość jest zgodna z oryginałem.
 - **test_validate_password_strength**: sprawdza, czy funkcja validate_password_strength poprawnie identyfikuje słabe i silne hasła. Testy obejmują różne przypadki, takie jak brak wielkich liter, małych liter, cyfr i znaków specjalnych, a także zbyt krótkie hasła. Dzięki temu możemy upewnić się, że funkcja działa zgodnie z oczekiwaniami.
+
+- **test_temp_file_cleanup_encrypt**: Testuje, czy plik tymczasowy jest usuwany po zakończeniu operacji szyfrowania.Używa unittest.mock.patch do monitorowania tworzenia pliku tymczasowego i sprawdza, czy plik został usunięty po zakończeniu operacji.
+
+- **test_temp_file_cleanup_decrypt**: Testuje, czy plik tymczasowy jest usuwany po zakończeniu operacji deszyfrowania. Używa unittest.mock.patch do monitorowania tworzenia pliku

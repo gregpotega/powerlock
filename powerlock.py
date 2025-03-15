@@ -8,6 +8,7 @@ import hashlib
 import ctypes
 import keyring
 import re
+import tempfile
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -73,13 +74,18 @@ def encrypt_file(input_file: str, output_file: str, password: str):
         
         hmac_digest = hmac.new(hmac_key, ciphertext, hashlib.sha256).digest()
         
-        with open(output_file, 'wb') as f:
-            f.write(salt + iv + hmac_digest + ciphertext)
+        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+            temp_file.write(salt + iv + hmac_digest + ciphertext)
+            temp_file_path = temp_file.name
         
+        os.rename(temp_file_path, output_file)
         set_readonly(output_file)
         print(f"Encrypted file: {output_file}")
     except Exception as e:
         print(f"Error during encryption: {e}")
+    finally:
+        if os.path.exists(temp_file_path):
+            os.remove(temp_file_path)
 
 def decrypt_file(input_file: str, output_file: str, password: str):
     try:
@@ -107,12 +113,17 @@ def decrypt_file(input_file: str, output_file: str, password: str):
         pad_len = plaintext[-1]
         plaintext = plaintext[:-pad_len]
         
-        with open(output_file, 'wb') as f:
-            f.write(plaintext)
+        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+            temp_file.write(plaintext)
+            temp_file_path = temp_file.name
         
+        os.rename(temp_file_path, output_file)
         print(f"Decrypted file: {output_file}")
     except Exception as e:
         print(f"Error during decryption: {e}")
+    finally:
+        if os.path.exists(temp_file_path):
+            os.remove(temp_file_path)
 
 def encrypt_directory(input_dir: str, output_dir: str, password: str):
     try:
