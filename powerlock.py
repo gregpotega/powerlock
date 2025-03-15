@@ -181,7 +181,7 @@ def validate_password_strength(password: str) -> bool:
     Returns:
         bool: True if the password is strong, False otherwise.
     """
-    if len(password) < 8:
+    if len(password) < 6:
         print("Password must be at least 8 characters long.")
         return False
     if not re.search(r"[A-Z]", password):
@@ -197,6 +197,49 @@ def validate_password_strength(password: str) -> bool:
         print("Password must contain at least one special character.")
         return False
     return True
+
+def get_password_with_confirmation() -> str:
+    """
+    Prompts the user to enter and confirm their password.
+    
+    Returns:
+        str: The confirmed password.
+    """
+    attempts = 0
+    max_attempts = 3
+    while attempts < max_attempts:
+        password = getpass.getpass("Enter your password: ")
+        if not validate_password_strength(password):
+            print("Invalid password. Please try again.\n-------------")
+            attempts += 1
+            continue
+        confirm_password = getpass.getpass("Confirm your password: ")
+        if password == confirm_password:
+            return password
+        else:
+            print("Passwords do not match. Please try again.\n-------------")
+            attempts += 1
+    print("Maximum password attempts exceeded. Exiting.")
+    sys.exit(1)
+
+def get_password_without_confirmation() -> str:
+    """
+    Prompts the user to enter their password without confirmation.
+    
+    Returns:
+        str: The entered password.
+    """
+    attempts = 0
+    max_attempts = 3
+    while attempts < max_attempts:
+        password = getpass.getpass("Enter your password: ")
+        if validate_password_strength(password):
+            return password
+        else:
+            print("Invalid password. Please try again.\n-------------")
+            attempts += 1
+    print("Maximum password attempts exceeded. Exiting.")
+    sys.exit(1)
 
 def main():
     try:
@@ -222,20 +265,18 @@ def main():
         
         service_name = "powerlock"
         username = getpass.getuser()
-        password = get_password(service_name, username)
-        
-        if not password:
-            password = getpass.getpass("Enter your password: ")
-            if not validate_password_strength(password):
-                sys.exit(1)
-            set_password(service_name, username, password)
         
         if mode in ("--encrypt", "-e"):
+            # Always prompt for password confirmation during encryption
+            password = get_password_with_confirmation()
+            set_password(service_name, username, password)
             if os.path.isdir(input_path):
                 encrypt_directory(input_path, output_path, password)
             else:
                 encrypt_file(input_path, output_path, password)
         elif mode in ("--decrypt", "-d"):
+            # Always prompt for password during decryption
+            password = get_password_without_confirmation()
             if os.path.isdir(input_path):
                 decrypt_directory(input_path, output_path, password)
             else:
@@ -243,6 +284,9 @@ def main():
         else:
             print("Unknown option!")
             sys.exit(1)
+    except KeyboardInterrupt:
+        print("\nProcess interrupted by user. Exiting.")
+        sys.exit(1)
     except Exception as e:
         print(f"Error: {e}")
 

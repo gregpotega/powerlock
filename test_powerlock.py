@@ -2,7 +2,8 @@ import unittest
 import keyring
 import os
 import shutil
-from powerlock import derive_key, set_readonly, remove_readonly, encrypt_file, decrypt_file, encrypt_directory, decrypt_directory, derive_key, get_password, set_password, validate_password_strength
+from unittest.mock import patch
+from powerlock import derive_key, set_readonly, remove_readonly, encrypt_file, decrypt_file, encrypt_directory, decrypt_directory, derive_key, get_password, set_password, validate_password_strength, get_password_with_confirmation, get_password_without_confirmation
 
 
 class TestPowerlock(unittest.TestCase):
@@ -104,6 +105,8 @@ class TestPowerlock(unittest.TestCase):
         
         # Test strong password
         self.assertTrue(validate_password_strength("StrongPass1!"))
+
+    
 
 if __name__ == "__main__":
     unittest.main()

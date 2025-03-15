@@ -30,7 +30,7 @@ def print_info():
     info_text = """
 -------------------------------------------
 Program Name:   PowerLock
-Version:        1.0.0
+Version:        2.0.0
 Author:         Greg Potega
 Licence:        Apache 2.0
 Description:    PowerLock - a tool for encrypting and decrypting files and directories.
