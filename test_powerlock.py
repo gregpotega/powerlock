@@ -4,7 +4,9 @@ import os
 import shutil
 import tempfile
 from unittest.mock import patch
-from powerlock import derive_key, set_readonly, remove_readonly, encrypt_file, decrypt_file, encrypt_directory, decrypt_directory, derive_key, get_password, set_password, validate_password_strength, get_password_with_confirmation, get_password_without_confirmation
+from utils.encryption import derive_key, encrypt_file, decrypt_file, encrypt_directory, decrypt_directory
+from utils.file_utils import set_readonly, remove_readonly
+from utils.password_utils import get_password, set_password, validate_password_strength, get_password_with_confirmation, get_password_without_confirmation
 
 
 class TestPowerlock(unittest.TestCase):

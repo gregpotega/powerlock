@@ -39,11 +39,6 @@ Kod w pliku powerlock.py implementuje narzędzie do szyfrowania i deszyfrowania 
    - Program oferuje przydatne funkcje szyfrowania i deszyfrowania zarówno plików, jak i katalogów.
    - Interfejs wiersza poleceń jest intuicyjny i dobrze udokumentowany.
 
-4. **Potencjalne ulepszenia**:
-   - Można rozważyć dodanie obsługi wyjątków dla bardziej szczegółowego raportowania błędów.
-   - Można dodać testy jednostkowe, aby zapewnić poprawność działania funkcji.
-
-Ogólnie rzecz biorąc, kod jest solidny, dobrze zabezpieczony i dobrze napisany. Spełnia swoje zadanie w sposób efektywny i bezpieczny.
 
 ### Opis testów jednostkowych
 
