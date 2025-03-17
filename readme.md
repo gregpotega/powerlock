@@ -1,57 +1,80 @@
-Audyt
+# PowerLock
 
-Kod w pliku powerlock.py implementuje narzędzie do szyfrowania i deszyfrowania plików oraz katalogów przy użyciu algorytmu AES-256 w trybie CBC z dodatkowym HMAC dla integralności danych. Oto szczegółowa analiza zabezpieczeń i ogólna ocena kodu:
+PowerLock is a tool for encrypting and decrypting files and directories using the AES-256 algorithm in CBC mode with additional HMAC for data integrity.
 
-### Zabezpieczenia
+## Table of Contents
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+  - [Linux](#installation-linux)
+  - [Windows](#installation-windows)
+- [Usage](#usage)
+- [License](#license)
+- [Contact](#contact)
 
-1. **Generowanie klucza**:
-   - Funkcja `derive_key` generuje klucz szyfrowania na podstawie hasła użytkownika i losowej soli przy użyciu PBKDF2-HMAC-SHA256. 
-   - Użycie soli i dużej liczby iteracji (100 000) zwiększa bezpieczeństwo, utrudniając ataki brute-force i ataki tęczowych tablic.
+## Features
+- **Secure file and directory encryption** using AES-256-CBC.
+- **Key generation** based on user password and salt using PBKDF2-HMAC-SHA256.
+- **Data integrity verification** via HMAC-SHA256.
+- **File attribute handling** (read-only mode, preventing modifications and deletion).
+- **Recursive encryption and decryption of directories**.
+- **Unit tests** ensuring correct functionality.
 
-2. **Szyfrowanie plików**:
-   - Funkcja `encrypt_file` szyfruje pliki przy użyciu AES-256 w trybie CBC.
-   - Generowane są losowe wartości soli i IV dla każdego pliku, co zapewnia unikalność szyfrowania nawet dla tych samych danych.
-   - Dodawany jest padding do danych, aby były wielokrotnością 16 bajtów.
-   - HMAC jest używany do zapewnienia integralności zaszyfrowanych danych.
+## Requirements
+- Python 3.8+
+- Libraries: `cryptography`, `unittest`, `os`, `shutil`, `getpass`, `logging`, `hmac`, `hashlib`, `tempfile`, `ctypes`, `re`, `keyring`
 
-3. **Deszyfrowanie plików**:
-   - Funkcja `decrypt_file` deszyfruje pliki, weryfikując integralność danych za pomocą HMAC.
-   - Klucz jest ponownie generowany na podstawie hasła i soli.
-   - Padding jest usuwany po deszyfrowaniu.
+## Installation
 
-4. **Szyfrowanie i deszyfrowanie katalogów**:
-   - Funkcje `encrypt_directory` i `decrypt_directory` rekurencyjnie szyfrują i deszyfrują wszystkie pliki w katalogu.
+### Installation Linux
+PowerLock is distributed as a .deb package for easy installation, but it must be run from the terminal.
 
-5. **Atrybuty plików**:
-   - Funkcje `set_readonly` i `remove_readonly` ustawiają i usuwają atrybut tylko do odczytu dla plików, co może zapobiec przypadkowemu usunięciu lub modyfikacji zaszyfrowanych plików.
+1. Download the PowerLock package for Linux. 
+2. Install using:
+   ```sh
+   sudo dpkg -i powerlock.deb
+   ```
+3. Verify installation:
+   ```sh
+   powerlock --help
+   ```
 
-### Ocena kodu
+### Installation Windows
+1. Download the PowerLock executable (powerlock.exe).
+2. Move the file to a convenient location (e.g., C:\PowerLock).
+3. Open a Command Prompt (Win + R, type cmd, and press Enter).
+4. Navigate to the folder where PowerLock is stored:
+   ```sh
+   cd C:\PowerLock\
+   ```
+5. Run the program with:
+   ```sh
+   powerlock --help
+   ```
 
-1. **Bezpieczeństwo**:
-   - Kod jest dobrze zabezpieczony, używając silnych algorytmów kryptograficznych (AES-256, HMAC-SHA256) i technik (PBKDF2, losowe IV i sól).
-   - Użycie HMAC zapewnia integralność danych, co jest ważne w kontekście szyfrowania.
+## Usage
+Using PowerLock is simple. You can encrypt or decrypt files and directories with a single command.
 
-2. **Czytelność i struktura**:
-   - Kod jest dobrze zorganizowany i czytelny, z odpowiednimi komentarzami i dokumentacją.
-   - Funkcje są dobrze podzielone na mniejsze, odpowiedzialne za konkretne zadania, co ułatwia zrozumienie i utrzymanie kodu.
+Encrypt a file:
+   ```sh
+   powerlock -e file.txt file.txt.enc
+   ```
+Encrypt a directory:
+   ```sh
+   powerlock -e folder folder.enc
+   ```
+Decrypt a file:
+   ```sh
+   powerlock -d file.txt.enc file.txt
+   ```
+Decrypt a directory:
+   ```sh
+   powerlock -d folder.enc folder
+   ```
 
-3. **Użyteczność**:
-   - Program oferuje przydatne funkcje szyfrowania i deszyfrowania zarówno plików, jak i katalogów.
-   - Interfejs wiersza poleceń jest intuicyjny i dobrze udokumentowany.
+## License
+This project is licensed under the Apache 2.0 License. See the [LICENSE](LICENSE) file for details.
 
+## Contact
+If you have any questions or need support, please contact Greg at [potegagreg@gmail.com](mailto:potegagreg@gmail.com).
 
-### Opis testów jednostkowych
-
-- **setUp**: Tworzy tymczasowy katalog i plik testowy przed każdym testem.
-- **tearDown**: Usuwa tymczasowy katalog po każdym teście.
-- **test_set_readonly**: Sprawdza, czy plik jest ustawiony jako tylko do odczytu.
-- **test_remove_readonly**: Sprawdza, czy atrybut tylko do odczytu jest usunięty.
-- **test_encrypt_file**: Sprawdza, czy plik jest zaszyfrowany.
-- **test_decrypt_file**: Sprawdza, czy plik jest odszyfrowany i jego zawartość jest zgodna z oryginałem.
-- **test_encrypt_directory**: Sprawdza, czy katalog jest zaszyfrowany.
-- **test_decrypt_directory**: Sprawdza, czy katalog jest odszyfrowany i jego zawartość jest zgodna z oryginałem.
-- **test_validate_password_strength**: sprawdza, czy funkcja validate_password_strength poprawnie identyfikuje słabe i silne hasła. Testy obejmują różne przypadki, takie jak brak wielkich liter, małych liter, cyfr i znaków specjalnych, a także zbyt krótkie hasła. Dzięki temu możemy upewnić się, że funkcja działa zgodnie z oczekiwaniami.
-
-- **test_temp_file_cleanup_encrypt**: Testuje, czy plik tymczasowy jest usuwany po zakończeniu operacji szyfrowania.Używa unittest.mock.patch do monitorowania tworzenia pliku tymczasowego i sprawdza, czy plik został usunięty po zakończeniu operacji.
-
-- **test_temp_file_cleanup_decrypt**: Testuje, czy plik tymczasowy jest usuwany po zakończeniu operacji deszyfrowania. Używa unittest.mock.patch do monitorowania tworzenia pliku
