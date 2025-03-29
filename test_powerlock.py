@@ -4,7 +4,7 @@ import os
 import shutil
 import tempfile
 from unittest.mock import patch
-from utils.encryption import derive_key, encrypt_file, decrypt_file, encrypt_directory, decrypt_directory
+from utils.encryption import derive_key, encrypt_file, decrypt_file, encrypt_directory, decrypt_directory, encrypt_filename, decrypt_filename
 from utils.file_utils import set_readonly, remove_readonly
 from utils.password_utils import get_password, set_password, validate_password_strength, get_password_with_confirmation, get_password_without_confirmation
 
@@ -123,6 +123,27 @@ class TestPowerlock(unittest.TestCase):
             decrypt_file(self.encrypted_file, self.decrypted_file, password)
             temp_file_path = mock_tempfile.return_value.name
             self.assertFalse(os.path.exists(temp_file_path), "Temporary file was not deleted after decryption")
+
+    def test_decrypt_filename(self):
+        password = "testpassword"
+        salt = b"testsalt"
+        key, _ = derive_key(password, salt)
+        original_filename = "test_file.txt"
+        encrypted_filename = encrypt_filename(original_filename, key)
+        decrypted_filename = decrypt_filename(encrypted_filename, key)
+        self.assertEqual(original_filename, decrypted_filename)
+
+    def test_decrypt_directory_with_titles(self):
+        password = "testpassword"
+        output_dir = self.test_dir + "_enc"
+        decrypt_dir = self.test_dir + "_dec"
+        encrypt_directory(self.test_dir, output_dir, password, encrypt_title=True)
+        decrypt_directory(output_dir, decrypt_dir, password, decrypt_title=True)
+        self.assertTrue(os.path.exists(decrypt_dir))
+        self.assertTrue(os.path.exists(os.path.join(decrypt_dir, "test_file.txt")))
+        with open(os.path.join(decrypt_dir, "test_file.txt"), "r") as f:
+            content = f.read()
+        self.assertEqual(content, "This is a test file.")
 
 
 if __name__ == "__main__":

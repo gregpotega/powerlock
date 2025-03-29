@@ -22,7 +22,7 @@ def main():
             sys.exit(0)
 
         if len(sys.argv) < 4:
-            print("Use: powerlock (-e | -d) or (--encrypt | --decrypt) <input_path> <output_path>")
+            print("Use: powerlock (-e | -d | -et | -dt) or (--encrypt | --decrypt | --encrypt-title | --decrypt-title) <input_path> <output_path>")
             sys.exit(1)
         
         mode = sys.argv[1]
@@ -37,7 +37,6 @@ def main():
         username = getpass.getuser()
         
         if mode in ("--encrypt", "-e"):
-            # Always prompt for password confirmation during encryption
             password = get_password_with_confirmation()
             set_password(service_name, username, password)
             if os.path.isdir(input_path):
@@ -45,12 +44,24 @@ def main():
             else:
                 encrypt_file(input_path, output_path, password)
         elif mode in ("--decrypt", "-d"):
-            # Always prompt for password during decryption
             password = get_password_without_confirmation()
             if os.path.isdir(input_path):
                 decrypt_directory(input_path, output_path, password)
             else:
                 decrypt_file(input_path, output_path, password)
+        elif mode in ("--encrypt-title", "-et"):
+            password = get_password_with_confirmation()
+            set_password(service_name, username, password)
+            if os.path.isdir(input_path):
+                encrypt_directory(input_path, output_path, password, encrypt_title=True)
+            else:
+                encrypt_file(input_path, output_path, password, encrypt_title=True)
+        elif mode in ("--decrypt-title", "-dt"):
+            password = get_password_without_confirmation()
+            if os.path.isdir(input_path):
+                decrypt_directory(input_path, output_path, password, decrypt_title=True)
+            else:
+                decrypt_file(input_path, output_path, password, decrypt_title=True)
         else:
             print("Unknown option!")
             sys.exit(1)
