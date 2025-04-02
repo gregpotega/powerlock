@@ -91,11 +91,11 @@ def decrypt_file(input_file: str, output_file: str, password: str, decrypt_title
             print(f"Error: File {input_file} does not exist")
             return
         
-        # Odszyfrowanie nazwy pliku, jeśli opcja jest włączona
+        # Decrypting the file name if the option is enabled
         if decrypt_title:
             encrypted_filename = os.path.basename(input_file)
             with open(input_file, 'rb') as f:
-                salt = f.read(SALT_SIZE)  # Pobierz sól z pliku
+                salt = f.read(SALT_SIZE)  # get the salt from the file
             key, _ = derive_key(password, salt)
             decrypted_filename = decrypt_filename(encrypted_filename, key)
             output_file = os.path.join(os.path.dirname(output_file), decrypted_filename)
@@ -124,7 +124,7 @@ def decrypt_file(input_file: str, output_file: str, password: str, decrypt_title
             temp_file_path = temp_file.name
         
         if not decrypt_title and output_file.endswith('.enc'):
-            output_file = output_file[:-4]  # Usuń końcówkę .enc, jeśli istnieje
+            output_file = output_file[:-4]  # remove .enc extension
         
         os.rename(temp_file_path, output_file)
         print(f"Decrypted file: {output_file}")
@@ -169,16 +169,16 @@ def decrypt_directory(input_dir: str, output_dir: str, password: str, decrypt_ti
                 input_file_path = os.path.join(root, file)
                 if decrypt_title:
                     with open(input_file_path, 'rb') as f:
-                        salt = f.read(SALT_SIZE)  # Pobierz sól z pliku
+                        salt = f.read(SALT_SIZE)  # get the salt from the file
                     key, _ = derive_key(password, salt)
                     try:
                         file = decrypt_filename(file, key)
                     except Exception as e:
                         print(f"Error decrypting file title '{file}': {e}")
-                        continue  # Pomijamy plik, jeśli nie udało się odszyfrować tytułu
+                        continue  # skip this file if decryption fails
                 
                 if file.endswith('.enc'):
-                    output_file_path = os.path.join(target_root, file[:-4])  # Usuń rozszerzenie .enc
+                    output_file_path = os.path.join(target_root, file[:-4])  # remove .enc extension
                     decrypt_file(input_file_path, output_file_path, password, decrypt_title=False)
     except Exception as e:
         print(f"Error during directory decryption: {e}")

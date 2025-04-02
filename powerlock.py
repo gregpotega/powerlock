@@ -2,11 +2,15 @@
 
 import os
 import sys
+sys.path.append('/usr/lib/powerlock/')
+
 import getpass
 import logging
 from utils.help import print_help, print_info
 from utils.password_utils import get_password_with_confirmation, get_password_without_confirmation, set_password
 from utils.encryption import encrypt_file, decrypt_file, encrypt_directory, decrypt_directory
+
+
 
 # Configure logging
 logging.basicConfig(filename='powerlock.log', level=logging.ERROR)

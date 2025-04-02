@@ -30,13 +30,30 @@ Examples:
     print(help_text)
 
 def print_info():
-    info_text = """
+    info_text = f"""
 -------------------------------------------
-Program Name:   PowerLock
-Version:        1.0.1
-Author:         Greg Potega
-Licence:        Apache 2.0
-Description:    PowerLock - a tool for encrypting and decrypting files and directories.
--------------------------------------------   
+Program Name:   {NAME_APP}
+Version:        {PROGRAM_VERSION}
+Author:         {AUTHOR}
+Licence:        {LICENSE}
+Description:    {DESCRIPTION}
+-------------------------------------------
+This program is licensed under the Apache License 2.0.
+-------------------------------------------
 """
     print(info_text)
+
+def print_info_gui():
+    info_text = f"""
+Name: {NAME_APP}
+Version: {PROGRAM_VERSION}
+Author: {AUTHOR}
+Licence: {LICENSE}  
+"""
+    return info_text
+
+NAME_APP = "PowerLock"
+PROGRAM_VERSION = "2.0.0"
+AUTHOR = "Greg Potega"
+LICENSE = "Apache 2.0"
+DESCRIPTION = "PowerLock - a tool for encrypting and decrypting files and directories."
