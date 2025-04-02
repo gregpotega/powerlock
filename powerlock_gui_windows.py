@@ -53,6 +53,10 @@ def process():
     encrypt_title = encrypt_title_var.get()
     generate_report_flag = generate_report_var.get()
 
+    # Debugging: Print paths to verify correctness
+    print(f"Input Path: {input_path}")
+    print(f"Output Path: {output_path}")
+
     if not input_path or not output_path or not password:
         custom_messagebox("Error", "All fields are required!")
         return

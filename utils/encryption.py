@@ -3,6 +3,7 @@ import hmac
 import hashlib
 import tempfile
 import base64
+import shutil # for moving files
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -75,7 +76,8 @@ def encrypt_file(input_file: str, output_file: str, password: str, encrypt_title
             encrypted_filename = encrypt_filename(os.path.basename(output_file), key)
             output_file = os.path.join(os.path.dirname(output_file), encrypted_filename)
         
-        os.rename(temp_file_path, output_file)
+
+        shutil.move(temp_file_path, output_file)
         set_readonly(output_file)
         print(f"Encrypted file: {output_file}")
     except Exception as e:
@@ -125,8 +127,9 @@ def decrypt_file(input_file: str, output_file: str, password: str, decrypt_title
         
         if not decrypt_title and output_file.endswith('.enc'):
             output_file = output_file[:-4]  # remove .enc extension
+          
         
-        os.rename(temp_file_path, output_file)
+        shutil.move(temp_file_path, output_file)
         print(f"Decrypted file: {output_file}")
     except ValueError as e:
         print(f"ValueError during decryption: {e}")

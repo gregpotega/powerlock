@@ -53,7 +53,7 @@ Licence: {LICENSE}
     return info_text
 
 NAME_APP = "PowerLock"
-PROGRAM_VERSION = "2.0.0"
+PROGRAM_VERSION = "2.0.1"
 AUTHOR = "Greg Potega"
 LICENSE = "Apache 2.0"
 DESCRIPTION = "PowerLock - a tool for encrypting and decrypting files and directories."
