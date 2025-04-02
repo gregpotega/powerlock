@@ -32,7 +32,7 @@ PowerLock is distributed as a .deb package for easy installation, but it must be
 1. Download the PowerLock package for Linux. 
 2. Install using:
    ```sh
-   sudo dpkg -i powerlock.deb
+   sudo dpkg -i powerlock_2.0.1.deb
    ```
 3. Verify installation:
    ```sh
@@ -40,9 +40,16 @@ PowerLock is distributed as a .deb package for easy installation, but it must be
    ```
 
 ### Installation Windows
-1. Download the PowerLock executable (powerlock.exe).
-2. Move the file to a convenient location (e.g., C:\PowerLock).
-3. Open a Command Prompt (Win + R, type cmd, and press Enter).
+1. Download the PowerLock GUI installer (e.g., `PowerLock_GUI_Setup.exe`) from the official website.
+2. Run the installer by double-clicking the downloaded file.
+3. Follow the installation wizard to complete the setup.
+4. Once installed, you can launch PowerLock GUI from the Start Menu or by searching for "PowerLock" in the Windows search bar.
+5. To verify the installation, open the program and ensure the GUI loads correctly.
+
+Alternatively, you can still use the command-line version:
+1. Download the PowerLock executable (`powerlock.exe`).
+2. Move the file to a convenient location (e.g., `C:\PowerLock`).
+3. Open a Command Prompt (Win + R, type `cmd`, and press Enter).
 4. Navigate to the folder where PowerLock is stored:
    ```sh
    cd C:\PowerLock\
@@ -53,7 +60,18 @@ PowerLock is distributed as a .deb package for easy installation, but it must be
    ```
 
 ## Usage
-Using PowerLock is simple. You can encrypt or decrypt files and directories with a single command.
+
+### Using PowerLock GUI on Linux
+PowerLock also provides a graphical user interface (GUI) for easier usage. To launch the GUI, simply run the following command in your terminal:
+
+   ```sh
+   powerlock-gui
+   ```
+
+This will open the PowerLock GUI, where you can easily select files or directories to encrypt or decrypt, set passwords, and configure additional options.
+
+### Command-Line Usage
+Using PowerLock via the command line is simple. You can encrypt or decrypt files and directories with a single command.
 
 Encrypt a file:
    ```sh
